@@ -63,7 +63,8 @@ Sorting with multiple criteria can be accomplished using a list of comma separat
 `GET /pitchingSessions/:uuid/pitches?sort=releaseSpeed`
 
 Notice that sorting in a descending order, we use a `-` before the property name, and for ascending we just use the
-property name.
+property name. Taken from
+[Vinay Sanhi - Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
 
 ## Searching
 If we wanted to essentially combine filtering and sorting in order to create a search for resources, we could just
