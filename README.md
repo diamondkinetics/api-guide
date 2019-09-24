@@ -66,46 +66,67 @@ Notice that sorting in a descending order, we use a `-` before the property name
 property name.
 
 ## Searching
-If we wanted to essentially combine filtering and sorting in order to create a search for resources, we could just combine query parameters.
+If we wanted to essentially combine filtering and sorting in order to create a search for resources, we could just
+combine query parameters.
 ### Examples
-- To sort and filter pitches from a pitching session, we use `GET /pitchingSessions/:uuid/pitches?flagged=true&sort=-releaseSpeed`
+- To sort and filter pitches from a pitching session, we use
+`GET /pitchingSessions/:uuid/pitches?flagged=true&sort=-releaseSpeed`
   - This would retrieve flagged pitches and sort them by release speed in descending order.
 
 ## Aliases
-Packaging sets of conditions into easily accessible paths can make API consumption a bit easier. If there are parameters that are consistently used on a specific endpoint, it may make sense to create an alias for it. These will more often than not be in the form of a `GET` request.
+Packaging sets of conditions into easily accessible paths can make API consumption a bit easier. If there are parameters
+that are consistently used on a specific endpoint, it may make sense to create an alias for it. These will more often
+than not be in the form of a `GET` request.
 ### Examples
 - To retrieve our most recent pitching session, create an alias such as: `GET /pitchingSessions/latest`
 - To retrieve a group's current join requests, create an alias such as: `GET /groups/:uuid/joinRequests`
 
 ## Limiting Fields
-Consumers of the API don't always need the full representation of a resource. The ability to select and choose returned fields can let the consumer minimize network traffic and speed up their API usage. To accomplish this, we use a `fields` query parameter that takes a comma separated list of fields to include in the response.
+Consumers of the API don't always need the full representation of a resource. The ability to select and choose returned
+fields can let the consumer minimize network traffic and speed up their API usage. To accomplish this, we use a `fields`
+query parameter that takes a comma separated list of fields to include in the response.
 ### Examples
-- To only retrieve the `uuid` and `releaseSpeed` fields when retrieving pitches for a particular pitching session, we use: `GET /pitchingSessions/:uuid/pitches?fields=uuid,releaseSpeed`
-- To only retrieve the `uuid`, `sessionDate`, and `flagged` fields when retrieving a list of the current user's pitching sessions, we use: `GET /pitchingSessions?fields=uuid,sessionDate,flagged`
+- To only retrieve the `uuid` and `releaseSpeed` fields when retrieving pitches for a particular pitching session, we
+use: `GET /pitchingSessions/:uuid/pitches?fields=uuid,releaseSpeed`
+- To only retrieve the `uuid`, `sessionDate`, and `flagged` fields when retrieving a list of the current user's pitching
+sessions, we use: `GET /pitchingSessions?fields=uuid,sessionDate,flagged`
 
 ## Pagination
-Including any pagination details for a list of resources should always be accomplished using the `Link` header in the API response. This can return a set of ready-made links so an API consumer does not have to worry about constructing them on their own.
+Including any pagination details for a list of resources should always be accomplished using the `Link` header in the
+API response. This can return a set of ready-made links so an API consumer does not have to worry about constructing
+them on their own.
 ### Examples
-- For an API response from a request to list a current user's pitching sessions, the `Link` header for the first page looks like:
+- For an API response from a request to list a current user's pitching sessions, the `Link` header for the first page
+looks like:
 ```
-Link: <https://api.diamondkinetics.com/pitchingSessions?page=2&perPage=10>; rel="next", <https://api.diamondkinetics.com/pitchingSessions?page=10&perPage=10>; rel="last"
+Link: <https://api.diamondkinetics.com/pitchingSessions?page=2&perPage=10>;
+rel="next", <https://api.diamondkinetics.com/pitchingSessions?page=10&perPage=10>; rel="last"
 ```
 - The second page `Link` header looks like:
 ```
-Link: <https://api.diamondkinetics.com/pitchingSessions?page=1&perPage=10>; rel="previous", <https://api.diamondkinetics.com/pitchingSessions?page=3&perPage=10>; rel="next", <https://api.diamondkinetics.com/pitchingSessions?page=10&perPage=10>; rel="last"
+Link: <https://api.diamondkinetics.com/pitchingSessions?page=1&perPage=10>; rel="previous",
+<https://api.diamondkinetics.com/pitchingSessions?page=3&perPage=10>; rel="next",
+<https://api.diamondkinetics.com/pitchingSessions?page=10&perPage=10>; rel="last"
 ```
 
 ## Relationship Auto Loading
-It's common for an API consumer to need data related to a requested resource. The efficient way to accomplish this would be to allow related data to be returned along with the original requested resource. A good way to include related resources would be to use a query parameter named something along the lines of *embed*. This query parameter utilizes a comma separated list for it's value which represents a list of fields to be embedded with the requested resource. Dot-notation can be used to reference sub-fields.
+It's common for an API consumer to need data related to a requested resource. The efficient way to accomplish this would
+be to allow related data to be returned along with the original requested resource. A good way to include related
+resources would be to use a query parameter named something along the lines of *embed*. This query parameter utilizes a
+comma separated list for it's value which represents a list of fields to be embedded with the requested resource.
+Dot-notation can be used to reference sub-fields.
 
 **NOTE:** Be wary of N+1 select scenarios when implementing this approach.
 
 ### Examples
 - Returning a user along with a pitching session can be accomplished with: `GET /pitchingSessions/:uuid?embed=user`
-- Returning just a user's first name, last name, and uuid along with the pitching session can be accomplished with `GET /pitchingSessions/:uuid?embed=user.firstName,user.lastName,user.uuid`
+- Returning just a user's first name, last name, and uuid along with the pitching session can be accomplished with
+`GET /pitchingSessions/:uuid?embed=user.firstName,user.lastName,user.uuid`
 
 ## Batch Operations
-Sometimes we want to perform a batch operation such as `GET` multiple users, `GET` batting sessions for multiple users, or `DELETE` multiple swings. To accomplish this, rather than specifying a single `UUID` like we would when fetching a specific resource, we need to specify a list of comma separated `UUID` values.
+Sometimes we want to perform a batch operation such as `GET` multiple users, `GET` batting sessions for multiple users,
+or `DELETE` multiple swings. To accomplish this, rather than specifying a single `UUID` like we would when fetching a 
+specific resource, we need to specify a list of comma separated `UUID` values.
 ### Examples
 - Requesting multiple users: `GET /users/:uuids`
 - Requesting batting sessions for multiple users: `GET /users/:uuids/battingSessions`
