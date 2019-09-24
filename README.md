@@ -5,19 +5,21 @@ Please feel free to create pull requests in order to make updates.
 ---
 
 ## Table of Contents
-1. Resources
-2. Actions
-3. Filtering
-4. Sorting
-5. Searching
-6. Aliases
-7. Limiting Fields
-8. Pagination
-9. Relationship Auto Loading
-10. Requesting Multiple Objects
-11. Versioning
-12. Error Handling
-13. White Space and Compression
+- [Resources](#resources)
+- [Actions](#actions)
+- [Non-standard Actions](#non-standard-actions)
+- [Filtering](#filtering)
+- [Sorting](#sorting)
+- [Searching](#searching)
+- [Aliases](#aliases)
+- [Limiting Fields](#limiting-fields)
+- [Pagination](#pagination)
+- [Relationship Auto Loading](#relationship-auto-loading)
+- [Batch Operations](#batch-operations)
+- [Versioning](#versioning)
+- [Error Handling](#error-handling)
+- [White Space and Compression](#white-space-and-compression)
+- [References](#references)
 
 ---
 
@@ -37,6 +39,14 @@ We perform actions on resources, such as create, read, update, and delete (usual
 - To get a specific pitching session, we use: `GET /pitchingSessions/:uuid`
   - `PUT` or `UPDATE` can also be used in order to update or delete a specific resource as well.
 
+## Non-standard Actions
+When it comes to dealing with non-standard actions, we have a few choices available to us for URL mapping.
+- Restructure the action to appear like a field of a resource: `PUT /bullpens/:uuid/complete`
+- Treat the action like a sub-resource: `PUT /pitchingSessions/:uuid/flag` and `DELETE /pitchingSessions/:uuid/flag`
+  - Taken from [GitHub's API](https://developer.github.com/v3/gists/#star-a-gist)
+- In the event there is no way to map an action to a sensible RESTful structure, using a generic endpoint is alright.
+  - A multi-resource search can use something such as `GET /search` 
+
 ## Filtering
 Use a unique query parameter in the endpoint URL for each field that implements filtering.
 ### Examples
@@ -47,10 +57,13 @@ Use a unique query parameter in the endpoint URL for each field that implements 
 To sort, we can use a generic parameter such as `sort` for describing any sorting rules on an endpoint.
 Sorting with multiple criteria can be accomplished using a list of comma separated rules.
 ### Examples
-- To list pitches from a pitching session sorted by release speed in descending order, we use `GET /pitchingSessions/:uuid/pitches?sort=-releaseSpeed`
-- To list pitches from a pitching session sorted by release speed in ascending order, we use `GET /pitchingSessions/:uuid/pitches?sort=releaseSpeed`
+- To list pitches from a pitching session sorted by release speed in descending order, we use
+`GET /pitchingSessions/:uuid/pitches?sort=-releaseSpeed`
+- To list pitches from a pitching session sorted by release speed in ascending order, we use
+`GET /pitchingSessions/:uuid/pitches?sort=releaseSpeed`
 
-Notice that sorting in a descending order, we use a `-` before the property name, and for ascending we just use the property name.
+Notice that sorting in a descending order, we use a `-` before the property name, and for ascending we just use the
+property name.
 
 ## Searching
 If we wanted to essentially combine filtering and sorting in order to create a search for resources, we could just combine query parameters.
@@ -91,10 +104,67 @@ It's common for an API consumer to need data related to a requested resource. Th
 - Returning a user along with a pitching session can be accomplished with: `GET /pitchingSessions/:uuid?embed=user`
 - Returning just a user's first name, last name, and uuid along with the pitching session can be accomplished with `GET /pitchingSessions/:uuid?embed=user.firstName,user.lastName,user.uuid`
 
-## Requesting Multiple Objects
+## Batch Operations
+Sometimes we want to perform a batch operation such as `GET` multiple users, `GET` batting sessions for multiple users, or `DELETE` multiple swings. To accomplish this, rather than specifying a single `UUID` like we would when fetching a specific resource, we need to specify a list of comma separated `UUID` values.
+### Examples
+- Requesting multiple users: `GET /users/:uuids`
+- Requesting batting sessions for multiple users: `GET /users/:uuids/battingSessions`
+- Deleting multiple swings: `DELETE /swings/:uuids`
 
 ## Versioning
+We declare the major version of the API to use in the URL
+### Examples
+- User profile version 2: `GET /v2/users/:uuid/profile`
+- Batting sessions version 3: `GET /v3/battingSessions`
+
+#### Future considerations
+- Documentation
+- Version fallback for unimplemented next version URLs
+- Date-based sub-versions that can be specified using custom HTTP request headers.
 
 ## Error Handling
+An API should provide a useful error message in a known consumable format such as JSON. The error body should provide
+at least the HTTP status code, along with a message. A more detailed description of the error can be included as needed.
+### Examples
+- Conflict, resource already exists.
+```
+{
+    "code": 409,
+    "message": "That thing already exists",
+    "description": "You can't make this, it's already a thing."
+}
+```
+
+- Field specific validation errors should be included for `PUT`, `PATCH`, and `POST` requests. This should be modeled
+using a fixed top-level error code for validation failures and providing the detailed errors in an additional
+***errors*** field.
+```
+{
+    "code": 400,
+    "message": "Validation failed",
+    "errors": [
+        {
+            "code": 123,
+            "field": "firstName",
+            "message": "First name is required"
+        },
+        {
+            "code": 124,
+            "field": "nickname",
+            "message": "Nickname cannot contain spaces"
+        }
+    ]
+}
+```
+
 
 ## White Space and Compression
+Pretty print responses with the extra whitespace. Removing whitespace does not save much bandwidth, usually around 8.5%.
+With GZip compression enabled, removing all whitespace only saves around 2.5%. GZipping in itself saves around 60% in
+bandwidth savings. Pretty printing with GZip enabled is preferred.
+
+## References
+1. [Vinay Sanhi - Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
+2. [O'Reilly - How a RESTful API represents resources](https://www.oreilly.com/ideas/how-a-restful-api-represents-resources)
+3. [O'Reilly - How to design a RESTful API architecture from a human-language spec](https://www.oreilly.com/learning/how-to-design-a-restful-api-architecture-from-a-human-language-spec)
+4. [Google - API Design Guide](https://cloud.google.com/apis/design/)
