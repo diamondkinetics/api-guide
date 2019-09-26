@@ -41,14 +41,16 @@ We perform actions on resources, such as create, read, update, and delete (usual
 
 ## Non-standard Actions
 When it comes to dealing with non-standard actions, we have a few choices available to us for URL mapping.
+[<sup>[1]</sup>](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#restful)
 - Restructure the action to appear like a field of a resource: `PUT /bullpens/:uuid/complete`
 - Treat the action like a sub-resource: `PUT /pitchingSessions/:uuid/flag` and `DELETE /pitchingSessions/:uuid/flag`
-  - Taken from [GitHub's API](https://developer.github.com/v3/gists/#star-a-gist)
+[<sup>[5]</sup>](https://developer.github.com/v3/gists/#star-a-gist)
 - In the event there is no way to map an action to a sensible RESTful structure, using a generic endpoint is alright.
   - A multi-resource search can use something such as `GET /search` 
 
 ## Filtering
 Use a unique query parameter in the endpoint URL for each field that implements filtering.
+[<sup>[1]</sup>](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
 ### Examples
 - To only list flagged pitching sessions, we use: `GET /pitchingSessions?flagged=true`
 - To only list non-deleted pitching sessions, we use: `GET /pitchingSessions?deleted=false`
@@ -56,6 +58,7 @@ Use a unique query parameter in the endpoint URL for each field that implements 
 ## Sorting
 To sort, we can use a generic parameter such as `sort` for describing any sorting rules on an endpoint.
 Sorting with multiple criteria can be accomplished using a list of comma separated rules.
+[<sup>[1]</sup>](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
 ### Examples
 - To list pitches from a pitching session sorted by release speed in descending order, we use
 `GET /pitchingSessions/:uuid/pitches?sort=-releaseSpeed`
@@ -63,12 +66,12 @@ Sorting with multiple criteria can be accomplished using a list of comma separat
 `GET /pitchingSessions/:uuid/pitches?sort=releaseSpeed`
 
 Notice that sorting in a descending order, we use a `-` before the property name, and for ascending we just use the
-property name. Taken from
-[Vinay Sanhi - Best Practices for Designing a Pragmatic RESTful API](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
+property name.
 
 ## Searching
 If we wanted to essentially combine filtering and sorting in order to create a search for resources, we could just
 combine query parameters.
+[<sup>[1]</sup>](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
 ### Examples
 - To sort and filter pitches from a pitching session, we use
 `GET /pitchingSessions/:uuid/pitches?flagged=true&sort=-releaseSpeed`
@@ -96,6 +99,7 @@ sessions, we use: `GET /pitchingSessions?fields=uuid,sessionDate,flagged`
 Including any pagination details for a list of resources should always be accomplished using the `Link` header in the
 API response. This can return a set of ready-made links so an API consumer does not have to worry about constructing
 them on their own.
+[<sup>[1]</sup>](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#pagination)
 ### Examples
 - For an API response from a request to list a current user's pitching sessions, the `Link` header for the first page
 looks like:
@@ -190,3 +194,4 @@ bandwidth savings. Pretty printing with GZip enabled is preferred.
 2. [O'Reilly - How a RESTful API represents resources](https://www.oreilly.com/ideas/how-a-restful-api-represents-resources)
 3. [O'Reilly - How to design a RESTful API architecture from a human-language spec](https://www.oreilly.com/learning/how-to-design-a-restful-api-architecture-from-a-human-language-spec)
 4. [Google - API Design Guide](https://cloud.google.com/apis/design/)
+5. [GitHub API - Start a Gist](https://developer.github.com/v3/gists/#star-a-gist)
