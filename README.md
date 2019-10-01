@@ -230,4 +230,4 @@ bandwidth savings. Pretty printing with GZip enabled is preferred.
 2. [O'Reilly - How a RESTful API represents resources](https://www.oreilly.com/ideas/how-a-restful-api-represents-resources)
 3. [O'Reilly - How to design a RESTful API architecture from a human-language spec](https://www.oreilly.com/learning/how-to-design-a-restful-api-architecture-from-a-human-language-spec)
 4. [Google - API Design Guide](https://cloud.google.com/apis/design/)
-5. [GitHub API - Start a Gist](https://developer.github.com/v3/gists/#star-a-gist)
+5. [GitHub API - Star a Gist](https://developer.github.com/v3/gists/#star-a-gist)
