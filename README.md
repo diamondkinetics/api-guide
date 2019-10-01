@@ -217,6 +217,10 @@ We declare the major version of the API to use in the URL
 
 #### Future considerations
 - Documentation
+  - Better Swagger front-end
+    - [redoc](https://github.com/Redocly/redoc)
+    - [Swagger UI](https://swagger.io/tools/swagger-ui/)
+    - [LucyBot](https://lucybot.com/)
 - Version fallback for unimplemented next version URLs
   - For discussion: What happens when we fallback to a version with DRASTICALLY different formats?
 - Date-based sub-versions that can be specified using custom HTTP request headers.
