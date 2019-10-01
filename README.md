@@ -163,6 +163,43 @@ Dot-notation can be used to reference sub-fields.
 - Returning just a user's first name, last name, and uuid along with the pitching session can be accomplished with
 `GET /pitchingSessions/:uuid?embed=user.firstName,user.lastName,user.uuid`
 
+### Proposals
+- When a single related resource is not auto-loaded, we will supply the `UUID` for it. Such as `userUuid` for a `User` resource.
+- When a set of related resources are not auto-loaded, we will provide metadata about the set such as `count`, `deletedCount`, and `maxLastUpdated`.
+
+- If we aren't auto-loading related entities, do we include metadata about the related entity/entities.
+  - For a single entity, we would just supply the UUID such as `userUuid`.
+  - For a set of entities, we will have an object that contains metadata such as `count`, `deletedCount`, and `maxLastUpdated`. For example, a batting session structure without swings loaded:
+  ```
+  {
+    uuid: string,
+    created: string,
+    lastUpdated: string,
+    deleted: boolean,
+    swings: {
+        count: integer,
+        deletedCount: integer,
+        maxLastUpdated: string
+    }
+  }
+  ```
+  - If resources are loaded, they will be contained in an array named `data`. For example, a batting session with swings
+  loaded.
+  ```
+  {
+      uuid: string,
+      created: string,
+      lastUpdated: string,
+      deleted: boolean,
+      swings: {
+          data: array,
+          count: integer,
+          deletedCount: integer,
+          maxLastUpdated: string
+      }
+  }
+  ```
+
 ## Batch Operations
 Sometimes we want to perform a batch operation such as `GET` multiple users, `GET` batting sessions for multiple users,
 or `DELETE` multiple swings. To accomplish this, rather than specifying a single `UUID` like we would when fetching a 
