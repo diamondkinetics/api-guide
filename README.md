@@ -5,7 +5,8 @@ Please feel free to create pull requests in order to make updates.
 ---
 
 ## Table of Contents
-- [Resources](#resources)
+- [Concepts](#concepts)
+- [Naming Conventions](#naming-conventions)
 - [Actions](#actions)
 - [Non-standard Actions](#non-standard-actions)
 - [Filtering](#filtering)
@@ -23,13 +24,47 @@ Please feel free to create pull requests in order to make updates.
 
 ---
 
-## Resources
+## Concepts
+Concepts that are helpful to know in order to comprehend and use the API.
+
+### Response Codes
+| Response Code | Meaning      | Diamond Kinetics Specific |
+| ------------- | -------      | ------------------------- |
+| 200           | OK           | Successful request & response |
+| 201           | CREATED      | Successful creation |
+| 400           | BAD REQUEST  | Validation failure |
+| 401           | UNAUTHORIZED | There isn't enough information in the request to authenticate the user |
+| 403           | FORBIDDEN    | The authenticated user is unable to perform the requested action |
+| 409           | CONFLICT     | The object you are trying to create already exists. This is always for UUID conflict. |
+
+### Identifiers
+All entities in the Diamond Kinetics API will have *fixed* UUIDs to reference externally. This is generally a good practice (citation needed) and limits leaking any information about row numbers/count of our tables.
+
+### Data Synchronization
+sensorCreated
+clientCreated
+serverCreated
+
+### Authorization
+Any user in the system is authorized to see the sessions of any other user if they fall into one of the following categories.
+
+#### UserToUserConnection
+Any two connected users can see each others sessions.
+
+#### Groups
+Any admin of a group can see all sessions of any other user in the group.
+
+#### Group role permissions
+Session View Role & DATA_ACCESSOR role description here.
+
+## Naming Conventions
 Resources in the Diamond Kinetics API should always be represented as nouns. When used in an endpoint,
 a resource should be plural.
+
+All such resources should be represented in camelCase.
 ### Examples
 - To represent pitching session resources, we use: `/pitchingSessions`
 - To represent batting session resources, we use: `/battingSessions`
-
 
 ## Actions
 We perform actions on resources, such as create, read, update, and delete (usually via an HTTP request type).
@@ -146,6 +181,7 @@ We declare the major version of the API to use in the URL
 #### Future considerations
 - Documentation
 - Version fallback for unimplemented next version URLs
+  - For discussion: What happens when we fallback to a version with DRASTICALLY different formats?
 - Date-based sub-versions that can be specified using custom HTTP request headers.
 
 ## Error Handling
