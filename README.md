@@ -152,9 +152,9 @@ Link: <https://api.diamondkinetics.com/pitchingSessions?page=1&perPage=10>; rel=
 ## Relationship Auto Loading
 It's common for an API consumer to need data related to a requested resource. The efficient way to accomplish this would
 be to allow related data to be returned along with the original requested resource. A good way to include related
-resources would be to use a query parameter named something along the lines of *embed*. This query parameter utilizes a
-comma separated list for it's value which represents a list of fields to be embedded with the requested resource.
-Dot-notation can be used to reference sub-fields.
+resources would be to use a query parameter named something along the lines of *embed* for children, and *expand* for
+parents. This query parameter utilizes a comma separated list for it's value which represents a list of fields to be
+embedded with the requested resource. Dot-notation can be used to reference sub-fields.
 
 **NOTE:** Be wary of N+1 select scenarios when implementing this approach.
 
@@ -162,6 +162,9 @@ Dot-notation can be used to reference sub-fields.
 - Returning a user along with a pitching session can be accomplished with: `GET /pitchingSessions/:uuid?embed=user`
 - Returning just a user's first name, last name, and uuid along with the pitching session can be accomplished with
 `GET /pitchingSessions/:uuid?embed=user.firstName,user.lastName,user.uuid`
+- Returning a parent pitchingSession with a pitch can be accomplished with `GET /pitch/:uuid?expand=pitchingSession`
+- Returning a parent pitchingSession's name with a pitch can be accomplished with
+`GET /pitch/:uuid?expand=pitchingSession.name`
 
 ### Proposals
 - When a single related resource is not auto-loaded, we will supply the `UUID` for it. Such as `userUuid` for a `User` resource.
@@ -177,6 +180,7 @@ Dot-notation can be used to reference sub-fields.
     lastUpdated: string,
     deleted: boolean,
     swings: {
+        url: string,
         count: integer,
         deletedCount: integer,
         maxLastUpdated: string
@@ -192,6 +196,7 @@ Dot-notation can be used to reference sub-fields.
       lastUpdated: string,
       deleted: boolean,
       swings: {
+          url: string,
           data: array,
           count: integer,
           deletedCount: integer,
@@ -208,6 +213,8 @@ specific resource, we need to specify a list of comma separated `UUID` values.
 - Requesting multiple users: `GET /users/:uuids`
 - Requesting batting sessions for multiple users: `GET /users/:uuids/battingSessions`
 - Deleting multiple swings: `DELETE /swings/:uuids`
+### Proposals
+- Increase character count for request URL in tomcat https://serverfault.com/questions/56691/whats-the-maximum-url-length-in-tomcat
 
 ## Versioning
 We declare the major version of the API to use in the URL
