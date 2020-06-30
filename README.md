@@ -41,9 +41,9 @@ Concepts that are helpful to know in order to comprehend and use the API.
 All entities in the Diamond Kinetics API will have *fixed* UUIDs to reference externally. This is generally a good practice (citation needed) and limits leaking any information about row numbers/count of our tables.
 
 ### Data Synchronization
-sensorCreated
-clientCreated
-serverCreated
+- sensorCreated
+- clientCreated & clientUpdated
+- serverCreated & serverUpdated
 
 ### Authorization
 Any user in the system is authorized to see the sessions of any other user if they fall into one of the following categories.
@@ -55,7 +55,8 @@ Any two connected users can see each others sessions.
 Any admin of a group can see all sessions of any other user in the group.
 
 #### Group role permissions
-Session View Role & DATA_ACCESSOR role description here.
+- The "Session View Role" group property is the minimum role needed to view the sessions that are associated with this Group. Effectively, this prevents other users of the system from seeing sessions in this group. Most useful for groups created by showcase organizations
+- The DATA_ACCESSOR role is a special role that allows the user to ONLY access the sessions that are associated with this Group and *not* sessions taken outside of the group
 
 ## Naming Conventions
 Resources in the Diamond Kinetics API should always be represented as nouns. When used in an endpoint,
@@ -72,7 +73,7 @@ We perform actions on resources, such as create, read, update, and delete (usual
 - To create a pitching session, we use: `POST /pitchingSessions`
 - To get a list of pitching sessions for the current user, we use: `GET /pitchingSessions`
 - To get a specific pitching session, we use: `GET /pitchingSessions/:uuid`
-  - `PUT` or `UPDATE` can also be used in order to update or delete a specific resource as well.
+  - `PUT` or `PATCH` can also be used in order to update or delete a specific resource as well.
 
 ## Non-standard Actions
 When it comes to dealing with non-standard actions, we have a few choices available to us for URL mapping.
@@ -86,6 +87,9 @@ When it comes to dealing with non-standard actions, we have a few choices availa
 ## Filtering
 Use a unique query parameter in the endpoint URL for each field that implements filtering.
 [<sup>[1]</sup>](https://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api#advanced-queries)
+
+Generally, the Diamond Kinetics API only filters data based on the lastUpdated parameter. Generic filtering and slicing of data is something we don't do - we prefer strongly to understand the data access needs of our client and give custom accessors that match the business needs of the client.
+
 ### Examples
 - To only list flagged pitching sessions, we use: `GET /pitchingSessions?flagged=true`
 - To only list non-deleted pitching sessions, we use: `GET /pitchingSessions?deleted=false`
@@ -215,6 +219,8 @@ specific resource, we need to specify a list of comma separated `UUID` values.
 - Deleting multiple swings: `DELETE /swings/:uuids`
 ### Proposals
 - Increase character count for request URL in tomcat https://serverfault.com/questions/56691/whats-the-maximum-url-length-in-tomcat
+### Considerations
+- Partial Success? Or only success/failure?
 
 ## Versioning
 We declare the major version of the API to use in the URL
