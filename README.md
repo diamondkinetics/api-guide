@@ -191,6 +191,24 @@ embedded with the requested resource. Dot-notation can be used to reference sub-
     }
   }
   ```
+  - MJR 2020-07-07:
+    - Dropping URL since we're not doing any [HATEOAS](https://spring.io/projects/spring-hateoas).
+    - Starting all count related parameters with "count" so they group together in API documentation.
+    - Introducing `countViewable` as an example property to facilitate objects like GroupMembership that will need to incorporate additional information to present an accurate count to the user. I can also see GroupMembership in particular adding `countPendingJoinRequests`, `countPendingInvites`, etc. Lists of Swings would include things like `countFlagged` - in essence, consider this to be extendable per object type but with `countTotal` and `countDeleted` as standard properties.
+  ```
+  {
+    uuid: string,
+    created: string,
+    lastUpdated: string,
+    deleted: boolean,
+    swings: {
+        countTotal: integer,
+        countDeleted: integer,
+        countViewable: integer,
+        maxLastUpdated: string
+    }
+  }
+  ```
   - If resources are loaded, they will be contained in an array named `data`. For example, a batting session with swings
   loaded.
   ```
